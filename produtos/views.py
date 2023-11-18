@@ -1,8 +1,12 @@
 from django.http import Http404, JsonResponse
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import get_object_or_404, redirect, render
 from django.views.generic import ListView, View
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from .models import Product
+
+
+def index_view(request):
+    return redirect('product-list')
 
 class ProductListView(ListView):
     model = Product
@@ -63,12 +67,13 @@ class ProductAjaxView(View):
         product.description = description
         product.price = price
         product.save()
-        print('X')
 
         return JsonResponse({'success': True, 'id': product.id})
 
     def delete_product(self, request):
+        print(f"request.POST: {request.POST}")
         product_id = request.POST.get('productID')
+        print(f"product_id: {product_id}")
 
         product = Product.objects.get(pk=product_id)
         product.delete()
